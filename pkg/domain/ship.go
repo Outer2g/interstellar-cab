@@ -13,7 +13,6 @@ type Ship struct {
 	Cost  int64  `json:"cost"`
 }
 
-// TODO Validation tests
 func NewShip(url, name, model, cost string) (*Ship, error) {
 	// TODO(alex) should not be compiled each time
 	r := regexp.MustCompile(`.*/([0-9]+)/`)

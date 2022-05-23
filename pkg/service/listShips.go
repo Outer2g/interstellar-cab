@@ -55,7 +55,7 @@ func (s *ListShipsService) getShipsFromApi() (*apiResponse, error) {
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
-		log.Fatalln(err)
+		return nil, fmt.Errorf("ERROR reading ships json from the api due to: %s", err)
 	}
 
 	var apiObject apiResponse

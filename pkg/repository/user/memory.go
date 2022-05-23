@@ -1,5 +1,6 @@
 package repository
 
+//TODO This should be in domain
 type User struct {
 	Email        string
 	Passwordhash string
