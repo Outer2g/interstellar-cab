@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
 	"github.com/Outer2g/interstellar-cab/pkg/repository/ships"
 )
 
@@ -29,7 +28,7 @@ type requestShip struct {
 }
 
 func NewReservationHandler() *ReservationHandler {
-	return &ReservationHandler{nil, NewReservationInMemoryDatabase()}
+	return &ReservationHandler{ships.NewShipApiRepository(), NewReservationInMemoryDatabase()}
 }
 
 func readRequest(reader io.ReadCloser) (*requestShip, error) {
@@ -84,13 +83,12 @@ func (u ReservationHandler) HandleNewReservation(rw http.ResponseWriter, r *http
 		return
 	}
 
-	//	ship := u.shipRepository.GetShip(requestShip.Id)
-	ship := domain.Ship{12, "test", "testModel", 251000}
-	// if ship == nil {
-	// 	rw.WriteHeader(http.StatusNotFound)
-	// 	log.Println("Ship not found")
-	// 	return
-	// }
+	ship, err := u.shipRepository.GetShip(requestShip.Id)
+	if err != nil {
+		rw.WriteHeader(http.StatusNotFound)
+		log.Println("Ship not found")
+		return
+	}
 
 	if !vip && ship.Cost > MAX_FREE_USER_COST {
 		rw.WriteHeader(http.StatusNotFound)
