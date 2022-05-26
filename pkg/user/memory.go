@@ -1,4 +1,4 @@
-package repository
+package user
 
 //TODO This should be in domain
 type User struct {

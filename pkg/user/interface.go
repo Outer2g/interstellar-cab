@@ -1,4 +1,4 @@
-package repository
+package user
 
 type UserRepository interface {
 	GetUser(email string) *User

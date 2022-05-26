@@ -1,4 +1,4 @@
-package auth
+package user
 
 import (
 	"bytes"
@@ -6,16 +6,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	repository "github.com/Outer2g/interstellar-cab/pkg/repository/user"
 	"github.com/stretchr/testify/assert"
 )
 
 type testRepository struct {
-	user   *repository.User
+	user   *User
 	exists bool
 }
 
-func (repo *testRepository) GetUser(email string) *repository.User {
+func (repo *testRepository) GetUser(email string) *User {
 	return repo.user
 }
 
@@ -23,7 +22,7 @@ func (repo *testRepository) AddUser(email string, passwordhash string, isVip boo
 	return repo.exists
 }
 
-func newTestUserController(user *repository.User, exists bool) *AuthController {
+func newTestUserController(user *User, exists bool) *AuthController {
 	impl := testRepository{user, exists}
 	return &AuthController{&impl}
 }
@@ -152,9 +151,10 @@ func aUserInJsonWithBrokenMail() *bytes.Buffer {
 	return bytes.NewBuffer(jsonData)
 }
 
-func aUserWithPassword(email, password string) *repository.User {
-	return &repository.User{email, password, false}
+func aUserWithPassword(email, password string) *User {
+	return &User{email, password, false}
 }
-func aUser(email string) *repository.User {
+
+func aUser(email string) *User {
 	return aUserWithPassword(email, "123")
 }

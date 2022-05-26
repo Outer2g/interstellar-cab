@@ -1,4 +1,4 @@
-package repository
+package user
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 
 func newTestUserDatabase() *database {
 	email := "existing@email.com"
-	return &database{map[string]User{"existing@email.com": aUser(email)}}
+	return &database{map[string]User{"existing@email.com": aUserObject(email)}}
 }
 
 func TestGetUser(t *testing.T) {
@@ -21,7 +21,7 @@ func TestGetUser(t *testing.T) {
 	})
 
 	t.Run("Should return user when it exists", func(t *testing.T) {
-		expectedUser := aUser("existing@email.com")
+		expectedUser := aUserObject("existing@email.com")
 
 		user := repository.GetUser("existing@email.com")
 
@@ -46,6 +46,6 @@ func TestAddUser(t *testing.T) {
 	})
 }
 
-func aUser(email string) User {
+func aUserObject(email string) User {
 	return User{email, "123", false}
 }
