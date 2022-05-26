@@ -25,9 +25,9 @@ func handleRequest() {
 	router.HandleFunc("/login", authService.HandleLoginUser).Methods(http.MethodPost)
 	router.HandleFunc("/signup", authService.HandleSignupUser).Methods(http.MethodPost)
 
-	router.HandleFunc("/listShips", listHandler.HandleListShips)
+	router.HandleFunc("/ships", listHandler.HandleListShips)
 
-	router.HandleFunc("/createReservation", authService.CheckAuth(reser.HandleNewReservation)).Methods(http.MethodPost)
+	router.HandleFunc("/reservations", authService.CheckAuth(reser.HandleNewReservation)).Methods(http.MethodPost)
 	router.HandleFunc("/reservations", authService.CheckAuth(reser.HandleListReservations))
 
 	http.ListenAndServe(":3000", router)
