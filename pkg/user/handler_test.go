@@ -6,15 +6,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	user "github.com/Outer2g/interstellar-cab/pkg/user/repository"
 	"github.com/stretchr/testify/assert"
 )
 
 type testRepository struct {
-	user   *User
+	user   *user.User
 	exists bool
 }
 
-func (repo *testRepository) GetUser(email string) *User {
+func (repo *testRepository) GetUser(email string) *user.User {
 	return repo.user
 }
 
@@ -22,7 +23,7 @@ func (repo *testRepository) AddUser(email string, passwordhash string, isVip boo
 	return repo.exists
 }
 
-func newTestUserController(user *User, exists bool) *AuthController {
+func newTestUserController(user *user.User, exists bool) *AuthController {
 	impl := testRepository{user, exists}
 	return &AuthController{&impl}
 }
@@ -151,10 +152,10 @@ func aUserInJsonWithBrokenMail() *bytes.Buffer {
 	return bytes.NewBuffer(jsonData)
 }
 
-func aUserWithPassword(email, password string) *User {
-	return &User{email, password, false}
+func aUserWithPassword(email, password string) *user.User {
+	return &user.User{email, password, false}
 }
 
-func aUser(email string) *User {
+func aUser(email string) *user.User {
 	return aUserWithPassword(email, "123")
 }

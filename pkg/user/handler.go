@@ -2,17 +2,16 @@ package user
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"net/mail"
-	"strconv"
 
 	"github.com/Outer2g/interstellar-cab/pkg/auth"
+	user "github.com/Outer2g/interstellar-cab/pkg/user/repository"
 )
 
 type AuthController struct {
-	UserRepository
+	user.UserRepository
 }
 
 type responseOutput struct {
@@ -26,11 +25,11 @@ type credentials struct {
 }
 
 func NewUserAuth() *AuthController {
-	return &AuthController{NewUserInMemoryDatabase()}
+	return &AuthController{user.NewUserInMemoryDatabase()}
 }
 
 func (u AuthController) HandleSignupUser(rw http.ResponseWriter, r *http.Request) {
-	userObject := User{}
+	userObject := user.User{}
 	json.NewDecoder(r.Body).Decode(&userObject)
 
 	_, err := mail.ParseAddress(userObject.Email)
@@ -99,28 +98,5 @@ func (u AuthController) HandleLoginUser(rw http.ResponseWriter, r *http.Request)
 	respondJson(rw, responseOutput{
 		Token: token,
 		Email: user.Email,
-	})
-}
-
-func (u AuthController) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		authToken := r.Header.Get("Token")
-
-		if len(authToken) < 2 {
-			fmt.Errorf("Token not provided!")
-			w.WriteHeader(http.StatusServiceUnavailable)
-			return
-		}
-
-		claims, err := auth.VerifyJwtToken(authToken)
-		if err != nil {
-			log.Println(fmt.Errorf(err.Error()))
-			w.WriteHeader(http.StatusServiceUnavailable)
-			return
-		}
-
-		r.Header.Set("Email", claims.Email)
-		r.Header.Set("Vip", strconv.FormatBool(claims.Vip))
-		next.ServeHTTP(w, r)
 	})
 }
