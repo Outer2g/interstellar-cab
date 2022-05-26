@@ -41,7 +41,7 @@ func NewShipWithId(idString, name, model, cost string) (*Ship, error) {
 
 	intCost, err := strconv.ParseInt(cost, 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR Could not parse cost for ship with id %d", id)
+		return nil, fmt.Errorf("ERROR Could not parse cost %s for ship with id %d", cost, id)
 	}
 
 	return &Ship{id, name, model, intCost}, nil

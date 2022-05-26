@@ -86,7 +86,7 @@ func (u ReservationHandler) HandleNewReservation(rw http.ResponseWriter, r *http
 	ship, err := u.shipRepository.GetShip(requestShip.Id)
 	if err != nil {
 		rw.WriteHeader(http.StatusNotFound)
-		log.Println("Ship not found")
+		log.Println("Ship not found due to", err)
 		return
 	}
 
@@ -117,4 +117,17 @@ func (u ReservationHandler) HandleNewReservation(rw http.ResponseWriter, r *http
 	}
 
 	rw.WriteHeader(http.StatusOK)
+}
+
+func (handler ReservationHandler) HandleListReservations(rw http.ResponseWriter, r *http.Request) {
+	email := r.Header.Get("Email")
+	vip, _ := strconv.ParseBool(r.Header.Get("Vip"))
+	log.Println("new list reservation request for", email, vip)
+
+	list := handler.reservationRepository.ListReservations(email)
+	log.Println("User has reservations:", list)
+
+	rw.WriteHeader(http.StatusOK)
+	rw.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(rw).Encode(list)
 }

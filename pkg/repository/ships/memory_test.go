@@ -50,6 +50,15 @@ func TestGetShip(t *testing.T) {
 		assert.Nil(t, result)
 	})
 
+	t.Run("Should return error when cost unknown", func(t *testing.T) {
+		service := newTestListShipService(t, aShipUrl("2"), aShipWithUnkownCost(), nil)
+		result, err := service.GetShip("2")
+
+		assert.NotNil(t, err)
+		assert.Containsf(t, err.Error(), "ship does not have a known cost", err.Error())
+		assert.Nil(t, result)
+	})
+
 	// TODO more validation tests
 }
 
@@ -67,6 +76,33 @@ func aShipResponseJson() string {
 		"model": "CR90 corvette", 
 		"manufacturer": "Corellian Engineering Corporation", 
 		"cost_in_credits": "3500000", 
+		"length": "150", 
+		"max_atmosphering_speed": "950", 
+		"crew": "30-165", 
+		"passengers": "600", 
+		"cargo_capacity": "3000000", 
+		"consumables": "1 year", 
+		"hyperdrive_rating": "2.0", 
+		"MGLT": "60", 
+		"starship_class": "corvette", 
+		"pilots": [], 
+		"films": [
+			"https://swapi.dev/api/films/1/", 
+			"https://swapi.dev/api/films/3/", 
+			"https://swapi.dev/api/films/6/"
+		], 
+		"created": "2014-12-10T14:20:33.369000Z", 
+		"edited": "2014-12-20T21:23:49.867000Z", 
+		"url": "https://swapi.dev/api/starships/2/"
+	}`
+}
+
+func aShipWithUnkownCost() string {
+	return `{
+		"name": "CR90 corvette", 
+		"model": "CR90 corvette", 
+		"manufacturer": "Corellian Engineering Corporation", 
+		"cost_in_credits": "unknown", 
 		"length": "150", 
 		"max_atmosphering_speed": "950", 
 		"crew": "30-165", 

@@ -28,7 +28,7 @@ func handleRequest() {
 	router.HandleFunc("/listShips", listHandler.HandleListShips)
 
 	router.HandleFunc("/createReservation", authService.CheckAuth(reser.HandleNewReservation)).Methods(http.MethodPost)
-	router.HandleFunc("/reservations", authService.CheckAuth(simpleResponse))
+	router.HandleFunc("/reservations", authService.CheckAuth(reser.HandleListReservations))
 
 	http.ListenAndServe(":3000", router)
 }

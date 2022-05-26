@@ -3,36 +3,43 @@ package reservations
 import (
 	"time"
 
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
 	"github.com/google/uuid"
 )
 
 type database struct {
-	shipOccupation map[int64][]rent
+	shipOccupation map[int64][]Reservation
+	userOccupation map[string][]Reservation
 }
 
-type rent struct {
-	id        string
-	dateFrom  time.Time
-	dateTo    time.Time
-	userEmail string
-	shipId    int64
+type Reservation struct {
+	Id        string
+	DateFrom  time.Time
+	DateTo    time.Time
+	UserEmail string
+	ShipId    int64
 }
 
 func NewReservationInMemoryDatabase() *database {
-	return &database{map[int64][]rent{}}
+	return &database{map[int64][]Reservation{}, map[string][]Reservation{}}
 }
 
 func (repo database) AddReservation(email string, shipId int64, dateFrom, dateTo time.Time) error {
-	data := rent{uuid.New().String(), dateFrom, dateTo, email, shipId}
+	data := Reservation{uuid.New().String(), dateFrom, dateTo, email, shipId}
 
 	repo.shipOccupation[shipId] = append(repo.shipOccupation[shipId], data)
+	repo.userOccupation[email] = append(repo.userOccupation[email], data)
 
 	return nil
 }
 
-func (repo database) ListReservations(email string) ([]domain.Reservation, error) {
-	return nil, nil
+func (repo database) ListReservations(email string) []Reservation {
+	reservations, present := repo.userOccupation[email]
+
+	if !present {
+		return []Reservation{}
+	}
+
+	return reservations
 }
 
 func (repo database) ShipAvailable(shipId int64, dateFrom, dateTo time.Time) (bool, error) {
@@ -43,7 +50,7 @@ func (repo database) ShipAvailable(shipId int64, dateFrom, dateTo time.Time) (bo
 	}
 
 	for _, reservation := range reservationList {
-		if available := checkReservationDates(reservation.dateFrom, reservation.dateTo, dateFrom, dateTo); !available {
+		if available := checkReservationDates(reservation.DateFrom, reservation.DateTo, dateFrom, dateTo); !available {
 			return false, nil
 		}
 	}

@@ -10,7 +10,12 @@ import (
 func newTestReservationsDatabase() *database {
 	from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
 	to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
-	return &database{map[int64][]rent{12: {{"21598182", from, to, "existing@email.com", 12}}}}
+
+	reservation := Reservation{"21598182", from, to, "existing@email.com", 12}
+
+	shipOccupation := map[int64][]Reservation{12: {reservation}}
+	userOccupation := map[string][]Reservation{"existing@email.com": {reservation}}
+	return &database{shipOccupation, userOccupation}
 }
 
 func TestAddReservation(t *testing.T) {
@@ -19,13 +24,47 @@ func TestAddReservation(t *testing.T) {
 	t.Run("Should add new reservation", func(t *testing.T) {
 		from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
 		to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
+		email := "anonexistent@email.com"
 
-		err := repository.AddReservation("anonexistent@email.com", 16, from, to)
+		err := repository.AddReservation(email, 16, from, to)
 
 		assert.Nil(t, err)
 		assert.EqualValues(t, 1, len(repository.shipOccupation[16]))
+		assert.EqualValues(t, 1, len(repository.userOccupation[email]))
+		shipReservation := repository.shipOccupation[16][0]
+		userReservation := repository.userOccupation[email][0]
+
+		assert.EqualValues(t, shipReservation, userReservation)
+		assert.EqualValues(t, shipReservation.DateFrom, from)
+		assert.EqualValues(t, shipReservation.DateTo, to)
+		assert.EqualValues(t, shipReservation.ShipId, 16)
+		assert.EqualValues(t, shipReservation.UserEmail, "anonexistent@email.com")
 	})
 }
+
+func TestListUserReservation(t *testing.T) {
+
+	t.Run("Should list existing reservations", func(t *testing.T) {
+		repository := newTestReservationsDatabase()
+		from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
+		to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
+		email := "existing@email.com"
+
+		result := repository.ListReservations(email)
+
+		assert.EqualValues(t, []Reservation{{"21598182", from, to, "existing@email.com", 12}}, result)
+	})
+
+	t.Run("Should return empty list when no reservations", func(t *testing.T) {
+		repository := newTestReservationsDatabase()
+		email := "anonexisting@email.com"
+
+		result := repository.ListReservations(email)
+
+		assert.EqualValues(t, []Reservation{}, result)
+	})
+}
+
 func TestShipAvailable(t *testing.T) {
 	repository := newTestReservationsDatabase()
 

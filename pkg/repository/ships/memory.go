@@ -60,6 +60,10 @@ func (repo ShipApiRepository) GetShip(shipId string) (*domain.Ship, error) {
 		return nil, fmt.Errorf("ERROR reading ships json from the api due to: %s", err)
 	}
 
+	if apiObject.CostInCredits == "unknown" {
+		return nil, fmt.Errorf("ERROR this ship does not have a known cost")
+	}
+
 	ship, err := domain.NewShipWithId(shipId, apiObject.Name, apiObject.Model, apiObject.CostInCredits)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR creating ship object due to: %s", err)
