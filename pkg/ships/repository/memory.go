@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
+	"github.com/Outer2g/interstellar-cab/pkg/ships"
 )
 
 type externalApi interface {
@@ -40,7 +40,7 @@ func generateShipUrl(shipId string) string {
 	return API_ENDPOINT + shipId
 }
 
-func (repo ShipApiRepository) GetShip(shipId string) (*domain.Ship, error) {
+func (repo ShipApiRepository) GetShip(shipId string) (*ships.Ship, error) {
 	response, err := repo.externalApi.GetShip(generateShipUrl(shipId))
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (repo ShipApiRepository) GetShip(shipId string) (*domain.Ship, error) {
 		return nil, fmt.Errorf("ERROR this ship does not have a known cost")
 	}
 
-	ship, err := domain.NewShipWithId(shipId, apiObject.Name, apiObject.Model, apiObject.CostInCredits)
+	ship, err := ships.NewShipWithId(shipId, apiObject.Name, apiObject.Model, apiObject.CostInCredits)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR creating ship object due to: %s", err)
 	}

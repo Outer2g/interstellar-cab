@@ -1,4 +1,4 @@
-package service
+package ships
 
 import (
 	"encoding/json"
@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
 )
 
 const API_ENDPOINT = "https://swapi.dev/api/starships"
@@ -34,7 +32,7 @@ func (f apiFunc) getShips() (resp *http.Response, err error) {
 	return http.Get(API_ENDPOINT)
 }
 
-func NewListShipsService() *ListShipsService {
+func NewListShipsHandler() *ListShipsService {
 	var impl apiFunc
 
 	return &ListShipsService{impl}
@@ -84,9 +82,9 @@ func (s *ListShipsService) HandleListShips(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	result := []domain.Ship{}
+	result := []Ship{}
 	for _, responseShip := range apiObject.Results {
-		ship, err := domain.NewShip(responseShip.Url, responseShip.Name, responseShip.Model, responseShip.Cost)
+		ship, err := NewShip(responseShip.Url, responseShip.Name, responseShip.Model, responseShip.Cost)
 		if err != nil {
 			log.Println(err)
 			continue

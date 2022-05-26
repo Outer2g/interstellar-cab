@@ -1,4 +1,4 @@
-package service
+package ships
 
 import (
 	"bytes"

@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
+	"github.com/Outer2g/interstellar-cab/pkg/ships"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,8 +62,8 @@ func TestGetShip(t *testing.T) {
 	// TODO more validation tests
 }
 
-func aShip() *domain.Ship {
-	return &domain.Ship{2, "CR90 corvette", "CR90 corvette", 3500000}
+func aShip() *ships.Ship {
+	return &ships.Ship{2, "CR90 corvette", "CR90 corvette", 3500000}
 }
 
 func aShipUrl(id string) string {

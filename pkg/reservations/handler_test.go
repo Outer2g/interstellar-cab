@@ -7,15 +7,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Outer2g/interstellar-cab/pkg/domain"
+	"github.com/Outer2g/interstellar-cab/pkg/ships"
 	"github.com/stretchr/testify/assert"
 )
 
 type shipRepository struct {
-	mockShip *domain.Ship
+	mockShip *ships.Ship
 }
 
-func (repo shipRepository) GetShip(shipId string) (*domain.Ship, error) {
+func (repo shipRepository) GetShip(shipId string) (*ships.Ship, error) {
 	return repo.mockShip, nil
 }
 
@@ -36,7 +36,7 @@ func (repo reservationTestRepository) ShipAvailable(shipId int64, dateFrom, date
 	return repo.mockAvailability, repo.mockAvailabilityError
 }
 
-func newTestReservationHandler(mockShip *domain.Ship, mockAvailability bool, mockAvailabilityError, mockReservationError error, mockReservationList []Reservation) *ReservationHandler {
+func newTestReservationHandler(mockShip *ships.Ship, mockAvailability bool, mockAvailabilityError, mockReservationError error, mockReservationList []Reservation) *ReservationHandler {
 	ships := shipRepository{mockShip}
 	reservations := reservationTestRepository{mockAvailability, mockAvailabilityError, mockReservationError, mockReservationList}
 	return &ReservationHandler{ships, reservations}
@@ -111,8 +111,12 @@ func TestHandleListReservations(t *testing.T) {
 		body, _ := ioutil.ReadAll(result.Body)
 
 		assert.EqualValues(t, 200, result.StatusCode)
-		assert.EqualValues(t, "[{11 2022-05-22 00:00:00 +0000 UTC 2022-05-25 00:00:00 +0000 UTC existing@email.com 12} {222 2022-07-22 00:00:00 +0000 UTC 2022-07-25 00:00:00 +0000 UTC existing@email.com 12}]", string(body))
+		assert.EqualValues(t, aReservationListResponseInJson(), string(body))
 	})
+}
+
+func aReservationListResponseInJson() string {
+	return `[{"Id":"11","DateFrom":"2022-05-22T00:00:00Z","DateTo":"2022-05-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12},{"Id":"222","DateFrom":"2022-07-22T00:00:00Z","DateTo":"2022-07-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12}]` + "\n"
 }
 
 func aListOfReservations() []Reservation {
@@ -141,6 +145,6 @@ func aShipInJson() *bytes.Buffer {
 	return bytes.NewBuffer(jsonData)
 }
 
-func aShipWithId(id int64) *domain.Ship {
-	return &domain.Ship{id, "test", "testModel", 4000000000}
+func aShipWithId(id int64) *ships.Ship {
+	return &ships.Ship{id, "test", "testModel", 4000000000}
 }

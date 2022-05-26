@@ -7,7 +7,7 @@ import (
 
 	"github.com/Outer2g/interstellar-cab/pkg/auth"
 	"github.com/Outer2g/interstellar-cab/pkg/reservations"
-	"github.com/Outer2g/interstellar-cab/pkg/service"
+	"github.com/Outer2g/interstellar-cab/pkg/ships"
 	"github.com/gorilla/mux"
 )
 
@@ -18,7 +18,7 @@ func simpleResponse(rw http.ResponseWriter, r *http.Request) {
 func handleRequest() {
 	router := mux.NewRouter().StrictSlash(true)
 
-	listHandler := service.NewListShipsService()
+	listHandler := ships.NewListShipsHandler()
 	authService := auth.NewUserAuth()
 	reser := reservations.NewReservationHandler()
 

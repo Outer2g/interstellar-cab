@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Outer2g/interstellar-cab/pkg/repository/ships"
+	ships "github.com/Outer2g/interstellar-cab/pkg/ships/repository"
 )
 
 const TO_DAY = 24
