@@ -8,6 +8,7 @@ import (
 	"github.com/Outer2g/interstellar-cab/pkg/auth"
 	"github.com/Outer2g/interstellar-cab/pkg/reservations"
 	"github.com/Outer2g/interstellar-cab/pkg/ships"
+	"github.com/Outer2g/interstellar-cab/pkg/user"
 	"github.com/gorilla/mux"
 )
 
@@ -19,16 +20,16 @@ func handleRequest() {
 	router := mux.NewRouter().StrictSlash(true)
 
 	listHandler := ships.NewListShipsHandler()
-	authService := auth.NewUserAuth()
-	reser := reservations.NewReservationHandler()
+	userHandler := user.NewUserAuth()
+	reservationHandler := reservations.NewReservationHandler()
 
-	router.HandleFunc("/login", authService.HandleLoginUser).Methods(http.MethodPost)
-	router.HandleFunc("/signup", authService.HandleSignupUser).Methods(http.MethodPost)
+	router.HandleFunc("/login", userHandler.HandleLoginUser).Methods(http.MethodPost)
+	router.HandleFunc("/signup", userHandler.HandleSignupUser).Methods(http.MethodPost)
 
 	router.HandleFunc("/ships", listHandler.HandleListShips)
 
-	router.HandleFunc("/reservations", authService.CheckAuth(reser.HandleNewReservation)).Methods(http.MethodPost)
-	router.HandleFunc("/reservations", authService.CheckAuth(reser.HandleListReservations))
+	router.HandleFunc("/reservations", auth.CheckAuth(reservationHandler.HandleNewReservation)).Methods(http.MethodPost)
+	router.HandleFunc("/reservations", auth.CheckAuth(reservationHandler.HandleListReservations))
 
 	http.ListenAndServe(":3000", router)
 }

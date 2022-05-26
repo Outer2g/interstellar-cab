@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	reservations "github.com/Outer2g/interstellar-cab/pkg/reservations/repository"
 	"github.com/Outer2g/interstellar-cab/pkg/ships"
 	"github.com/stretchr/testify/assert"
 )
@@ -23,20 +24,20 @@ type reservationTestRepository struct {
 	mockAvailability      bool
 	mockAvailabilityError error
 	mockReservationError  error
-	mockReservationList   []Reservation
+	mockReservationList   []reservations.Reservation
 }
 
 func (repo reservationTestRepository) AddReservation(email string, shipId int64, dateFrom, dateTo time.Time) error {
 	return repo.mockReservationError
 }
-func (repo reservationTestRepository) ListReservations(email string) []Reservation {
+func (repo reservationTestRepository) ListReservations(email string) []reservations.Reservation {
 	return repo.mockReservationList
 }
 func (repo reservationTestRepository) ShipAvailable(shipId int64, dateFrom, dateTo time.Time) (bool, error) {
 	return repo.mockAvailability, repo.mockAvailabilityError
 }
 
-func newTestReservationHandler(mockShip *ships.Ship, mockAvailability bool, mockAvailabilityError, mockReservationError error, mockReservationList []Reservation) *ReservationHandler {
+func newTestReservationHandler(mockShip *ships.Ship, mockAvailability bool, mockAvailabilityError, mockReservationError error, mockReservationList []reservations.Reservation) *ReservationHandler {
 	ships := shipRepository{mockShip}
 	reservations := reservationTestRepository{mockAvailability, mockAvailabilityError, mockReservationError, mockReservationList}
 	return &ReservationHandler{ships, reservations}
@@ -119,12 +120,12 @@ func aReservationListResponseInJson() string {
 	return `[{"Id":"11","DateFrom":"2022-05-22T00:00:00Z","DateTo":"2022-05-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12},{"Id":"222","DateFrom":"2022-07-22T00:00:00Z","DateTo":"2022-07-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12}]` + "\n"
 }
 
-func aListOfReservations() []Reservation {
+func aListOfReservations() []reservations.Reservation {
 	from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
 	to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
 	anotherFrom := time.Date(2022, 07, 22, 0, 0, 0, 0, time.UTC)
 	anotherTo := time.Date(2022, 07, 25, 0, 0, 0, 0, time.UTC)
-	return []Reservation{{"11", from, to, "existing@email.com", 12}, {"222", anotherFrom, anotherTo, "existing@email.com", 12}}
+	return []reservations.Reservation{{"11", from, to, "existing@email.com", 12}, {"222", anotherFrom, anotherTo, "existing@email.com", 12}}
 }
 func aShipWithWrongDates() *bytes.Buffer {
 	var jsonData = []byte(`{"id": "14","date_from": "2022-07-22T16:00:00.000Z","date_to": "2022-05-22T15:00:00.000Z"}`)

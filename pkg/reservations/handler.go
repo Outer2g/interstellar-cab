@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"time"
 
+	reservations "github.com/Outer2g/interstellar-cab/pkg/reservations/repository"
 	ships "github.com/Outer2g/interstellar-cab/pkg/ships/repository"
 )
 
@@ -18,7 +19,7 @@ const MAX_FREE_USER_COST = 250000
 
 type ReservationHandler struct {
 	shipRepository        ships.ShipsRepository
-	reservationRepository ReservationRepository
+	reservationRepository reservations.ReservationRepository
 }
 
 type requestShip struct {
@@ -28,7 +29,7 @@ type requestShip struct {
 }
 
 func NewReservationHandler() *ReservationHandler {
-	return &ReservationHandler{ships.NewShipApiRepository(), NewReservationInMemoryDatabase()}
+	return &ReservationHandler{ships.NewShipApiRepository(), reservations.NewReservationInMemoryDatabase()}
 }
 
 func readRequest(reader io.ReadCloser) (*requestShip, error) {
