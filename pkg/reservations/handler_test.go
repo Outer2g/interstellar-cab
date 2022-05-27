@@ -117,7 +117,7 @@ func TestHandleListReservations(t *testing.T) {
 }
 
 func aReservationListResponseInJson() string {
-	return `[{"Id":"11","DateFrom":"2022-05-22T00:00:00Z","DateTo":"2022-05-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12},{"Id":"222","DateFrom":"2022-07-22T00:00:00Z","DateTo":"2022-07-25T00:00:00Z","UserEmail":"existing@email.com","ShipId":12}]` + "\n"
+	return `[{"id":"11","date_from":"2022-05-22T00:00:00Z","date_to":"2022-05-25T00:00:00Z","UserEmail":"existing@email.com","ship_id":12,"creation_date":"2022-05-20T00:00:00Z"},{"id":"222","date_from":"2022-07-22T00:00:00Z","date_to":"2022-07-25T00:00:00Z","UserEmail":"existing@email.com","ship_id":12,"creation_date":"2022-05-20T00:00:00Z"}]` + "\n"
 }
 
 func aListOfReservations() []reservations.Reservation {
@@ -125,7 +125,8 @@ func aListOfReservations() []reservations.Reservation {
 	to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
 	anotherFrom := time.Date(2022, 07, 22, 0, 0, 0, 0, time.UTC)
 	anotherTo := time.Date(2022, 07, 25, 0, 0, 0, 0, time.UTC)
-	return []reservations.Reservation{{"11", from, to, "existing@email.com", 12}, {"222", anotherFrom, anotherTo, "existing@email.com", 12}}
+	creation := time.Date(2022, 05, 20, 0, 0, 0, 0, time.UTC)
+	return []reservations.Reservation{{"11", from, to, "existing@email.com", 12, creation}, {"222", anotherFrom, anotherTo, "existing@email.com", 12, creation}}
 }
 func aShipWithWrongDates() *bytes.Buffer {
 	var jsonData = []byte(`{"id": "14","date_from": "2022-07-22T16:00:00.000Z","date_to": "2022-05-22T15:00:00.000Z"}`)

@@ -10,8 +10,9 @@ import (
 func newTestReservationsDatabase() *database {
 	from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
 	to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
+	creation  := time.Date(2022, 05, 20, 0, 0, 0, 0, time.UTC)
 
-	reservation := Reservation{"21598182", from, to, "existing@email.com", 12}
+	reservation := Reservation{"21598182", from, to, "existing@email.com", 12, creation}
 
 	shipOccupation := map[int64][]Reservation{12: {reservation}}
 	userOccupation := map[string][]Reservation{"existing@email.com": {reservation}}
@@ -48,11 +49,12 @@ func TestListUserReservation(t *testing.T) {
 		repository := newTestReservationsDatabase()
 		from := time.Date(2022, 05, 22, 0, 0, 0, 0, time.UTC)
 		to := time.Date(2022, 05, 25, 0, 0, 0, 0, time.UTC)
+		creation := time.Date(2022, 05, 20, 0, 0, 0, 0, time.UTC)
 		email := "existing@email.com"
 
 		result := repository.ListReservations(email)
 
-		assert.EqualValues(t, []Reservation{{"21598182", from, to, "existing@email.com", 12}}, result)
+		assert.EqualValues(t, []Reservation{{"21598182", from, to, "existing@email.com", 12, creation}}, result)
 	})
 
 	t.Run("Should return empty list when no reservations", func(t *testing.T) {

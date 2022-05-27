@@ -12,11 +12,12 @@ type database struct {
 }
 
 type Reservation struct {
-	Id        string
-	DateFrom  time.Time
-	DateTo    time.Time
-	UserEmail string
-	ShipId    int64
+	Id           string    `json:"id"`
+	DateFrom     time.Time `json:"date_from"`
+	DateTo       time.Time `json:"date_to"`
+	UserEmail    string    `json:"user_email`
+	ShipId       int64     `json:"ship_id"`
+	CreationDate time.Time `json:"creation_date"`
 }
 
 func NewReservationInMemoryDatabase() *database {
@@ -24,7 +25,7 @@ func NewReservationInMemoryDatabase() *database {
 }
 
 func (repo database) AddReservation(email string, shipId int64, dateFrom, dateTo time.Time) error {
-	data := Reservation{uuid.New().String(), dateFrom, dateTo, email, shipId}
+	data := Reservation{uuid.New().String(), dateFrom, dateTo, email, shipId, time.Now()}
 
 	repo.shipOccupation[shipId] = append(repo.shipOccupation[shipId], data)
 	repo.userOccupation[email] = append(repo.userOccupation[email], data)
